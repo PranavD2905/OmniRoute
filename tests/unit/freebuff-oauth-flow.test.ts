@@ -263,7 +263,8 @@ test("poll route: network errors and garbage device codes are handled without a 
   });
   const network = await pollLogin(device.device_code);
   assert.equal(network.response.status, 500);
-  assert.deepEqual(network.data, { error: "Internal server error" });
+  // The route returns the sanitized error detail (release #16559), never a stack trace.
+  assert.deepEqual(network.data, { error: "fetch failed: ECONNRESET" });
 
   const calls = stubFetch(() => json({}));
   const garbage = await pollLogin("not-a-login-state");
